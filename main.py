@@ -83,5 +83,8 @@ def main():
                 print("Неверный пункт меню.")
 
 
+def gui():
+    pass
+
 if __name__ == "__main__":
-    main()
+    gui()
