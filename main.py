@@ -2,7 +2,8 @@ from transport.task_1.client import Client
 from transport.task_3.ship import Ship
 from transport.task_3.truck import Truck
 from transport.task_3.transportCompany import TransportCompany
-
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton
+import sys
 
 def main():
     company = TransportCompany("My Transport Company")
