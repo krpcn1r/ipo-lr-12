@@ -1,6 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QVBoxLayout, QHBoxLayout, QStatusBar, \
-    QTableWidget, QTableWidgetItem, QHeaderView, QComboBox, QLabel, QFrame
-import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, \
+    QTableWidget, QHeaderView, QComboBox, QLabel, QFrame
+from transport.gui.clients_gui.add_client import AddClient
+from transport.gui.clients_gui.change_client import ChangeClient
+from transport.gui.vehicle_gui.add_vehicle import AddVehicle
+from transport.gui.vehicle_gui.change_vehicle import ChangeVehicle
 
 
 from transport.task_3.transportCompany import TransportCompany
@@ -8,6 +11,10 @@ from transport.task_3.transportCompany import TransportCompany
 class MainWindow(QMainWindow):
 
     def __init__(self):
+        self.cv_window = ChangeVehicle()
+        self.av_window = AddVehicle()
+        self.cc_window = ChangeClient()
+        self.au_window = AddClient()
         company = TransportCompany("My Transport Company")
         super().__init__()
         self.setWindowTitle(company.name)
@@ -44,8 +51,12 @@ class MainWindow(QMainWindow):
 
         btn1 = QPushButton("Добавить клиента", central)
         btn1.setGeometry(50, 190, 140, 40)
+        btn1.clicked.connect(self.open_add_client)
+
         btn2 = QPushButton("Добавить транспорт", central)
         btn2.setGeometry(50, 280, 140, 40)
+        btn2.clicked.connect(self.open_add_vehicle)
+
         btn3 = QPushButton("Распределить грузы", central)
         btn3.setGeometry(50, 370, 140, 40)
         btn4 = QPushButton("Экспорт результата", central)
@@ -96,6 +107,15 @@ class MainWindow(QMainWindow):
             table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
         combo.currentTextChanged.connect(on_combo_changed)
+
+    def open_add_client(self):
+        self.au_window.show()
+    def open_change_client(self):
+        self.cc_window.show()
+    def open_add_vehicle(self):
+        self.av_window.show()
+    def open_change_vehicle(self):
+        self.cv_window.show()
 
 app = QApplication([])
 window = MainWindow()
