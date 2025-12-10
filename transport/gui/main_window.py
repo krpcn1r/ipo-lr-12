@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, \
     QTableWidget, QHeaderView, QComboBox, QLabel, QFrame
+from PyQt6.QtGui import QPalette, QColor
 from transport.gui.clients_gui.add_client import AddClient
 from transport.gui.clients_gui.change_client import ChangeClient
 from transport.gui.vehicle_gui.add_vehicle import AddVehicle
@@ -14,16 +15,14 @@ class MainWindow(QMainWindow):
         self.cv_window = ChangeVehicle()
         self.av_window = AddVehicle()
         self.cc_window = ChangeClient()
-        self.ac_window = AddClient()
+        self.au_window = AddClient()
         company = TransportCompany("My Transport Company")
         super().__init__()
         self.setWindowTitle(company.name)
         self.setFixedSize(1100, 700)
 
-
         central = QWidget()
         self.setCentralWidget(central)
-
 
         label = QLabel("Выберите таблицу:", central)
         label.setStyleSheet("""
@@ -38,16 +37,28 @@ class MainWindow(QMainWindow):
         combo = QComboBox(central)
         combo.setGeometry(50, 110, 140, 30)
         combo.addItems(["Клиенты", "Транспорт"])
-
+        combo.setStyleSheet("""
+            QComboBox{
+                background-color: #ffffff;
+                color: black;
+            }
+            QComboBox QAbstractItemView {
+                color: black;             
+                background-color: #ffffff;   
+                selection-background-color: #bdbbbb;
+                selection-color: #bdbbbb;  
+            }
+        """)
 
         line_h = QFrame(central)
         line_h.setFrameShape(QFrame.Shape.HLine)
         line_h.setGeometry(20, 145, 200, 30)
-
+        line_h.setStyleSheet("color: black;")
 
         line_v = QFrame(central)
         line_v.setFrameShape(QFrame.Shape.VLine)
         line_v.setGeometry(145, 25, 200, 630)
+        line_v.setStyleSheet("color: black;")
 
         btn1 = QPushButton("Добавить клиента", central)
         btn1.setGeometry(50, 190, 140, 40)
@@ -68,11 +79,11 @@ class MainWindow(QMainWindow):
         status = QStatusBar()
         status.setStyleSheet("""
             QStatusBar {
-                background-color: #292929;
+                background-color: #F0F0F0;
                 border-top: 1px solid #2C2C2C;
                 font-size: 10pt;
                 padding: 3px;
-                color: white;
+                color: #333333;
             }
         """)
         self.setStatusBar(status)
@@ -85,16 +96,30 @@ class MainWindow(QMainWindow):
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.setStyleSheet("""
             QTableWidget {
-                background-color: grey;        /* тёмный фон */
-                color: #f0f0f0;                   /* светлый текст */
-                border-left: #ffffff;   /* серая граница слева */
-                border-right: #ffffff;  /* серая граница справа */
-                gridline-color: #555555;          /* цвет внутренних линий */
-                selection-background-color: #444444; /* фон выделенной строки */
-                selection-color: #ffffff;         /* цвет текста при выделении */
+                gridline-color: #DDDDDD;  
+                background-color: #FFFFFF; 
+                alternate-background-color: #FAFAFA;
+                color: #212121;
             }
+            QHeaderView::section {
+                background-color: #cccccc; 
+                color: #212121;            
+            }
+            QTableCornerButton::section {
+                background-color: #DDDDDD;  
+                border: 1px solid #DDDDDD;
+            }
+            QTableWidget QLineEdit {
+                background-color: #D5D5D5;   /* фон редактора */
+                color: #212121;              /* цвет текста редактора */
+                border: 1px solid #BDBDBD;   /* рамка редактора */
+            }
+            QTableWidget::item:selected {
+            background-color: #bdbbbb;   
+            color: #000000;             
+        }
         """)
-
+        table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
 
         def on_combo_changed(text):
             if text == "Клиенты":
@@ -109,7 +134,7 @@ class MainWindow(QMainWindow):
         combo.currentTextChanged.connect(on_combo_changed)
 
     def open_add_client(self):
-        self.ac_window.show()
+        self.au_window.show()
     def open_change_client(self):
         self.cc_window.show()
     def open_add_vehicle(self):
@@ -118,6 +143,27 @@ class MainWindow(QMainWindow):
         self.cv_window.show()
 
 app = QApplication([])
+
+app.setStyleSheet("""
+QPushButton {
+    background-color: #ffffff;
+    color: #212121;
+    border: 1px solid #BDBDBD;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+QPushButton:hover {
+    background-color: #D5D5D5;
+}
+QPushButton:pressed {
+    background-color: #C0C0C0;
+}
+""")
+
 window = MainWindow()
 window.show()
+palette = QPalette()
+palette.setColor(QPalette.ColorRole.Window, QColor("#d9d7d7"))
+palette.setColor(QPalette.ColorRole.WindowText, QColor("black"))
+app.setPalette(palette)
 app.exec()
