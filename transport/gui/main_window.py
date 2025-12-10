@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         label = QLabel("Выберите таблицу:", central)
         label.setStyleSheet("""
         QLabel{
-            color: white;
+            color: black;
             font: 15px;
         }
         """)
@@ -85,10 +85,10 @@ class MainWindow(QMainWindow):
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.setStyleSheet("""
             QTableWidget {
-                background-color: #2b2b2b;        /* тёмный фон */
+                background-color: grey;        /* тёмный фон */
                 color: #f0f0f0;                   /* светлый текст */
-                border-left: solid #ffffff;   /* серая граница слева */
-                border-right: solid #ffffff;  /* серая граница справа */
+                border-left: #ffffff;   /* серая граница слева */
+                border-right: #ffffff;  /* серая граница справа */
                 gridline-color: #555555;          /* цвет внутренних линий */
                 selection-background-color: #444444; /* фон выделенной строки */
                 selection-color: #ffffff;         /* цвет текста при выделении */
