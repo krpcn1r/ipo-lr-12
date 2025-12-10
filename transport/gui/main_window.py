@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, \
     QTableWidget, QHeaderView, QComboBox, QLabel, QFrame
 from PyQt6.QtGui import QPalette, QColor
+from PyQt6.QtCore import Qt
 from transport.gui.clients_gui.add_client import AddClient
 from transport.gui.clients_gui.change_client import ChangeClient
 from transport.gui.vehicle_gui.add_vehicle import AddVehicle
@@ -73,7 +74,7 @@ class MainWindow(QMainWindow):
         btn4 = QPushButton("Экспорт результата", central)
         btn4.setGeometry(50, 460, 140, 40)
         btn5 = QPushButton("О программе", central)
-        btn5.setGeometry(50, 550, 140, 40)
+        btn5.setGeometry(50, 545, 140, 40)
 
 
         status = QStatusBar()
@@ -120,6 +121,8 @@ class MainWindow(QMainWindow):
         }
         """)
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
         def on_combo_changed(text):
             if text == "Клиенты":
@@ -134,12 +137,16 @@ class MainWindow(QMainWindow):
         combo.currentTextChanged.connect(on_combo_changed)
 
     def open_add_client(self):
+        self.au_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.au_window.show()
     def open_change_client(self):
+        self.cc_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.cc_window.show()
     def open_add_vehicle(self):
+        self.av_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.av_window.show()
     def open_change_vehicle(self):
+        self.cv_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.cv_window.show()
 
 app = QApplication([])
@@ -153,7 +160,7 @@ QPushButton {
     padding: 6px 12px;
 }
 QPushButton:hover {
-    background-color: #D5D5D5;
+    background-color: #adacac
 }
 QPushButton:pressed {
     background-color: #C0C0C0;
