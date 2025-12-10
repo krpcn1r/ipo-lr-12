@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         self.cv_window = ChangeVehicle()
         self.av_window = AddVehicle()
         self.cc_window = ChangeClient()
-        self.au_window = AddClient()
+        self.ac_window = AddClient()
         company = TransportCompany("My Transport Company")
         super().__init__()
         self.setWindowTitle(company.name)
@@ -109,7 +109,7 @@ class MainWindow(QMainWindow):
         combo.currentTextChanged.connect(on_combo_changed)
 
     def open_add_client(self):
-        self.au_window.show()
+        self.ac_window.show()
     def open_change_client(self):
         self.cc_window.show()
     def open_add_vehicle(self):
