@@ -25,7 +25,7 @@ class AddClient(QMainWindow):
             font: 15px;
         }
         """)
-        line_add_name.setGeometry(50, 30, 375, 25)
+        line_add_name.setGeometry(50, 30, 375, 30)
 
         line_add_weight = QLineEdit(central)
         line_add_weight.setPlaceholderText("Введите вес груза")
@@ -36,7 +36,7 @@ class AddClient(QMainWindow):
             font: 15px;
         }
         """)
-        line_add_weight.setGeometry(50, 80, 375, 25)
+        line_add_weight.setGeometry(50, 80, 375, 30)
 
         check_vip = QCheckBox("VIP-клиент ", central)
         check_vip.setLayoutDirection(Qt.LayoutDirection.RightToLeft)

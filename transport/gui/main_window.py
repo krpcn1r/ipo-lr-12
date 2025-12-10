@@ -32,11 +32,11 @@ class MainWindow(QMainWindow):
             font: 15px;
         }
         """)
-        label.setGeometry(52, 70, 200, 20)
+        label.setGeometry(52, 80, 200, 20)
 
 
         combo = QComboBox(central)
-        combo.setGeometry(50, 110, 140, 30)
+        combo.setGeometry(50, 120, 140, 30)
         combo.addItems(["Клиенты", "Транспорт"])
         combo.setStyleSheet("""
             QComboBox{
@@ -53,8 +53,18 @@ class MainWindow(QMainWindow):
 
         line_h = QFrame(central)
         line_h.setFrameShape(QFrame.Shape.HLine)
-        line_h.setGeometry(20, 145, 200, 30)
+        line_h.setGeometry(20, 155, 200, 30)
         line_h.setStyleSheet("color: black;")
+
+        line_h2 = QFrame(central)
+        line_h2.setFrameShape(QFrame.Shape.HLine)
+        line_h2.setGeometry(20, 285, 200, 30)
+        line_h2.setStyleSheet("color: black;")
+
+        line_h3 = QFrame(central)
+        line_h3.setFrameShape(QFrame.Shape.HLine)
+        line_h3.setGeometry(20, 468, 200, 30)
+        line_h3.setStyleSheet("color: black;")
 
         line_v = QFrame(central)
         line_v.setFrameShape(QFrame.Shape.VLine)
@@ -65,17 +75,24 @@ class MainWindow(QMainWindow):
         btn1.setGeometry(50, 190, 140, 40)
         btn1.clicked.connect(self.open_add_client)
 
-        btn2 = QPushButton("Добавить транспорт", central)
-        btn2.setGeometry(50, 280, 140, 40)
-        btn2.clicked.connect(self.open_add_vehicle)
+        btn2 = QPushButton("Изменить клиента", central)
+        btn2.setGeometry(50, 240, 140, 40)
 
-        btn3 = QPushButton("Распределить грузы", central)
-        btn3.setGeometry(50, 370, 140, 40)
-        btn4 = QPushButton("Экспорт результата", central)
-        btn4.setGeometry(50, 460, 140, 40)
-        btn5 = QPushButton("О программе", central)
-        btn5.setGeometry(50, 545, 140, 40)
+        btn3 = QPushButton("Добавить транспорт", central)
+        btn3.setGeometry(50, 320, 140, 40)
+        btn3.clicked.connect(self.open_add_vehicle)
 
+        btn4 = QPushButton("Изменить транспорт", central)
+        btn4.setGeometry(50, 370, 140, 40)
+
+        btn5 = QPushButton("Распределить грузы", central)
+        btn5.setGeometry(50, 420, 140, 40)
+
+        btn6 = QPushButton("Экспорт результата", central)
+        btn6.setGeometry(50, 505, 140, 40)
+
+        btn7 = QPushButton("О программе", central)
+        btn7.setGeometry(50, 555, 140, 40)
 
         status = QStatusBar()
         status.setStyleSheet("""
@@ -91,7 +108,7 @@ class MainWindow(QMainWindow):
         status.showMessage("Программа запущена")
 
 
-        table = QTableWidget(20, 3, central)
+        table = QTableWidget(0, 3, central)
         table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
         table.setGeometry(325, 85 , 700, 500)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
