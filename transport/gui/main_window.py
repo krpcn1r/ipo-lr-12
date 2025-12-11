@@ -6,9 +6,11 @@ from transport.gui.clients_gui.add_client import AddClient
 from transport.gui.clients_gui.change_client import ChangeClient
 from transport.gui.vehicle_gui.add_vehicle import AddVehicle
 from transport.gui.vehicle_gui.change_vehicle import ChangeVehicle
+from transport.gui.about_window import AboutWindow
 
 
 from transport.task_3.transportCompany import TransportCompany
+
 
 class MainWindow(QMainWindow):
 
@@ -17,6 +19,8 @@ class MainWindow(QMainWindow):
         self.av_window = AddVehicle()
         self.cc_window = ChangeClient()
         self.au_window = AddClient()
+        self.aw_window = AboutWindow()
+
         company = TransportCompany("My Transport Company")
         super().__init__()
         self.setWindowTitle(company.name)
@@ -33,7 +37,6 @@ class MainWindow(QMainWindow):
         }
         """)
         label.setGeometry(52, 80, 200, 20)
-
 
         combo = QComboBox(central)
         combo.setGeometry(50, 120, 140, 30)
@@ -77,6 +80,7 @@ class MainWindow(QMainWindow):
 
         btn2 = QPushButton("Изменить клиента", central)
         btn2.setGeometry(50, 240, 140, 40)
+        btn2.clicked.connect(self.open_change_client)
 
         btn3 = QPushButton("Добавить транспорт", central)
         btn3.setGeometry(50, 320, 140, 40)
@@ -84,6 +88,7 @@ class MainWindow(QMainWindow):
 
         btn4 = QPushButton("Изменить транспорт", central)
         btn4.setGeometry(50, 370, 140, 40)
+        btn4.clicked.connect(self.open_change_vehicle)
 
         btn5 = QPushButton("Распределить грузы", central)
         btn5.setGeometry(50, 420, 140, 40)
@@ -93,7 +98,7 @@ class MainWindow(QMainWindow):
 
         btn7 = QPushButton("О программе", central)
         btn7.setGeometry(50, 555, 140, 40)
-
+        btn7.clicked.connect(self.open_about_programm)
         status = QStatusBar()
         status.setStyleSheet("""
             QStatusBar {
@@ -107,24 +112,23 @@ class MainWindow(QMainWindow):
         self.setStatusBar(status)
         status.showMessage("Программа запущена")
 
-
         table = QTableWidget(0, 3, central)
         table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
-        table.setGeometry(325, 85 , 700, 500)
+        table.setGeometry(325, 85, 700, 500)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.setStyleSheet("""
             QTableWidget {
-                gridline-color: #DDDDDD;  
-                background-color: #FFFFFF; 
+                gridline-color: #DDDDDD;
+                background-color: #FFFFFF;
                 alternate-background-color: #FAFAFA;
                 color: #212121;
             }
             QHeaderView::section {
-                background-color: #cccccc; 
-                color: #212121;            
+                background-color: #cccccc;
+                color: #212121;
             }
             QTableCornerButton::section {
-                background-color: #DDDDDD;  
+                background-color: #DDDDDD;
                 border: 1px solid #DDDDDD;
             }
             QTableWidget QLineEdit {
@@ -133,8 +137,8 @@ class MainWindow(QMainWindow):
                 border: 1px solid #BDBDBD;   /* рамка редактора */
             }
             QTableWidget::item:selected {
-            background-color: #bdbbbb;   
-            color: #000000;             
+            background-color: #bdbbbb;
+            color: #000000;
         }
         """)
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -156,15 +160,23 @@ class MainWindow(QMainWindow):
     def open_add_client(self):
         self.au_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.au_window.show()
+
     def open_change_client(self):
         self.cc_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.cc_window.show()
+
     def open_add_vehicle(self):
         self.av_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.av_window.show()
+
     def open_change_vehicle(self):
         self.cv_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.cv_window.show()
+
+    def open_about_programm(self):
+        self.aw_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.aw_window.show()
+
 
 app = QApplication([])
 
