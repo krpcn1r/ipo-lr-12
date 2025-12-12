@@ -84,26 +84,6 @@ def main():
                 print("Неверный пункт меню.")
 
 
-def gui():
-    app = QApplication(sys.argv)
-
-    window = QWidget()
-    window.setWindowTitle(f"{company.name}")
-    window.setGeometry(100, 100, 600, 400)
-
-    btn1 = QPushButton("Экспорт результата")
-
-    btn2 = QPushButton("О программе")
-
-    btn3 = QPushButton("Добавить клиента")
-
-    btn4 = QPushButton("Добавить транспорт")
-
-    btn5 = QPushButton("Распределить грузы")
-
-
-    window.show()
-    sys.exit(app.exec())
 
 if __name__ == "__main__":
-    gui()
+    main()

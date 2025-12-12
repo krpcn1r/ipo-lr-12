@@ -7,13 +7,21 @@ class ChangeClient(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Изменить клиента")
-        self.setFixedSize(800, 600)
+        self.setFixedSize(700, 570)
 
         central = QWidget()
+        self.setCentralWidget(central)
+
+        btn_save = QPushButton("Сохранить", central)
+        btn_save.setGeometry(100, 515, 140, 40)
+
+        btn_close = QPushButton("Закрыть", central)
+        btn_close.setGeometry(460, 515, 140, 40)
+        btn_close.clicked.connect(self.close)
 
         table = QTableWidget(0, 3, central)
         table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
-        table.setGeometry(325, 85, 700, 500)
+        table.setGeometry(0, 0, 700, 500)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         table.setStyleSheet("""
             QTableWidget {
@@ -43,3 +51,5 @@ class ChangeClient(QMainWindow):
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+
+

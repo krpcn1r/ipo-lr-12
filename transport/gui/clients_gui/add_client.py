@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QPushButton, QLineEdit, QCheckBox
 from PyQt6.QtCore import Qt
+from transport.task_1.client import Client
 import sys
 
 class AddClient(QMainWindow):
