@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, \
+from PyQt6.QtWidgets import QTableWidgetItem, QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, \
     QTableWidget, QHeaderView, QComboBox, QLabel, QFrame
 from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtCore import Qt
@@ -7,41 +7,37 @@ from transport.gui.clients_gui.change_client import ChangeClient
 from transport.gui.vehicle_gui.add_vehicle import AddVehicle
 from transport.gui.vehicle_gui.change_vehicle import ChangeVehicle
 from transport.gui.about_window import AboutWindow
-
-
 from transport.task_3.transportCompany import TransportCompany
-
-
+from transport.task_1.client import Client
+import json
 class MainWindow(QMainWindow):
 
     def __init__(self):
+        super().__init__()
+
         self.cv_window = ChangeVehicle()
         self.av_window = AddVehicle()
+        self.av_window.vehicle_added.connect(self.add_vehicle_to_table)
         self.cc_window = ChangeClient()
         self.au_window = AddClient()
+        self.au_window.client_added.connect(self.add_client_to_table)
         self.aw_window = AboutWindow()
 
-        company = TransportCompany("My Transport Company")
-        super().__init__()
-        self.setWindowTitle(company.name)
+        self.company = TransportCompany("My Transport Company")
+        self.setWindowTitle(self.company.name)
         self.setFixedSize(1100, 700)
 
         central = QWidget()
         self.setCentralWidget(central)
 
         label = QLabel("Выберите таблицу:", central)
-        label.setStyleSheet("""
-        QLabel{
-            color: black;
-            font: 15px;
-        }
-        """)
+        label.setStyleSheet("QLabel{color: black; font: 15px;}")
         label.setGeometry(52, 80, 200, 20)
 
-        combo = QComboBox(central)
-        combo.setGeometry(50, 120, 140, 30)
-        combo.addItems(["Клиенты", "Транспорт"])
-        combo.setStyleSheet("""
+        self.combo = QComboBox(central)
+        self.combo.setGeometry(50, 120, 140, 30)
+        self.combo.addItems(["Клиенты", "Транспорт"])
+        self.combo.setStyleSheet("""
             QComboBox{
                 background-color: #ffffff;
                 color: black;
@@ -53,21 +49,13 @@ class MainWindow(QMainWindow):
                 selection-color: #bdbbbb;  
             }
         """)
+        self.combo.currentTextChanged.connect(self.on_combo_changed)
 
-        line_h = QFrame(central)
-        line_h.setFrameShape(QFrame.Shape.HLine)
-        line_h.setGeometry(20, 155, 200, 30)
-        line_h.setStyleSheet("color: black;")
-
-        line_h2 = QFrame(central)
-        line_h2.setFrameShape(QFrame.Shape.HLine)
-        line_h2.setGeometry(20, 285, 200, 30)
-        line_h2.setStyleSheet("color: black;")
-
-        line_h3 = QFrame(central)
-        line_h3.setFrameShape(QFrame.Shape.HLine)
-        line_h3.setGeometry(20, 468, 200, 30)
-        line_h3.setStyleSheet("color: black;")
+        for y in [155, 285, 468]:
+            line_h = QFrame(central)
+            line_h.setFrameShape(QFrame.Shape.HLine)
+            line_h.setGeometry(20, y, 200, 30)
+            line_h.setStyleSheet("color: black;")
 
         line_v = QFrame(central)
         line_v.setFrameShape(QFrame.Shape.VLine)
@@ -92,13 +80,19 @@ class MainWindow(QMainWindow):
 
         btn5 = QPushButton("Распределить грузы", central)
         btn5.setGeometry(50, 420, 140, 40)
+        btn5.clicked.connect(self.optimize_distribution)
 
         btn6 = QPushButton("Экспорт результата", central)
         btn6.setGeometry(50, 505, 140, 40)
 
         btn7 = QPushButton("О программе", central)
         btn7.setGeometry(50, 555, 140, 40)
-        btn7.clicked.connect(self.open_about_programm)
+        btn7.clicked.connect(self.open_about_program)
+
+        btn_delete = QPushButton("Удалить", central)
+        btn_delete.setGeometry(50, 600, 140, 40)
+        btn_delete.clicked.connect(self.delete_selected_row)
+
         status = QStatusBar()
         status.setStyleSheet("""
             QStatusBar {
@@ -112,11 +106,11 @@ class MainWindow(QMainWindow):
         self.setStatusBar(status)
         status.showMessage("Программа запущена")
 
-        table = QTableWidget(0, 3, central)
-        table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
-        table.setGeometry(325, 85, 700, 500)
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        table.setStyleSheet("""
+        self.table = QTableWidget(0, 3, central)
+        self.table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
+        self.table.setGeometry(325, 85, 700, 500)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.table.setStyleSheet("""
             QTableWidget {
                 gridline-color: #DDDDDD;
                 background-color: #FFFFFF;
@@ -132,30 +126,33 @@ class MainWindow(QMainWindow):
                 border: 1px solid #DDDDDD;
             }
             QTableWidget QLineEdit {
-                background-color: #D5D5D5;   /* фон редактора */
-                color: #212121;              /* цвет текста редактора */
-                border: 1px solid #BDBDBD;   /* рамка редактора */
+                background-color: #D5D5D5;
+                color: #212121;
+                border: 1px solid #BDBDBD;
             }
             QTableWidget::item:selected {
-            background-color: #bdbbbb;
-            color: #000000;
-        }
+                background-color: #bdbbbb;
+                color: #000000;
+            }
         """)
-        table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
-        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.table.cellDoubleClicked.connect(self.on_cell_double_clicked)
+        self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
 
-        def on_combo_changed(text):
-            if text == "Клиенты":
-                table.setColumnCount(3)
-                table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
-            elif text == "Транспорт":
-                table.setColumnCount(4)
-                table.setHorizontalHeaderLabels(["ID", "Тип", "Вместительность", "Текущая загрузка"])
-
-            table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-
-        combo.currentTextChanged.connect(on_combo_changed)
+    def on_combo_changed(self, text):
+        self.table.setRowCount(0)
+        if text == "Клиенты":
+            self.table.setColumnCount(3)
+            self.table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
+            for client in self.company.clients:
+                self.add_client_row(client)
+        elif text == "Транспорт":
+            self.table.setColumnCount(4)
+            self.table.setHorizontalHeaderLabels(["ID", "Тип", "Вместительность", "Текущая загрузка"])
+            for vehicle in self.company.vehicles:
+                self.add_vehicle_row(vehicle)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
     def open_add_client(self):
         self.au_window.setWindowModality(Qt.WindowModality.ApplicationModal)
@@ -173,28 +170,121 @@ class MainWindow(QMainWindow):
         self.cv_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.cv_window.show()
 
-    def open_about_programm(self):
+    def open_about_program(self):
         self.aw_window.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.aw_window.show()
 
+    def add_client_to_table(self, name: str, weight: float, is_vip: bool):
+        client = Client(name, weight, is_vip)
+        self.company.add_client(client)
+        self.add_client_row(client)
+
+    def add_vehicle_to_table(self, vehicle):
+        self.company.add_vehicle(vehicle)
+        row_position = self.table.rowCount()
+        self.table.insertRow(row_position)
+        self.table.setItem(row_position, 0, QTableWidgetItem(vehicle.vehicle_id))
+        self.table.setItem(row_position, 1, QTableWidgetItem(vehicle.__class__.__name__))
+        self.table.setItem(row_position, 2, QTableWidgetItem(str(vehicle.capacity)))
+        self.table.setItem(row_position, 3, QTableWidgetItem(str(vehicle.current_load)))
+
+    def add_client_row(self, client):
+        row = self.table.rowCount()
+        self.table.insertRow(row)
+        self.table.setItem(row, 0, QTableWidgetItem(client.name))
+        self.table.setItem(row, 1, QTableWidgetItem(str(client.cargo_weight)))
+        self.table.setItem(row, 2, QTableWidgetItem("VIP" if client.is_vip else "Обычный"))
+
+    def add_vehicle_row(self, vehicle):
+        row = self.table.rowCount()
+        self.table.insertRow(row)
+        self.table.setItem(row, 0, QTableWidgetItem(vehicle.vehicle_id))
+        self.table.setItem(row, 1, QTableWidgetItem(vehicle.__class__.__name__))
+        self.table.setItem(row, 2, QTableWidgetItem(str(vehicle.capacity)))
+        self.table.setItem(row, 3, QTableWidgetItem(str(vehicle.current_load)))
+
+    def on_cell_double_clicked(self, row, column):
+        if self.combo.currentText() == "Клиенты":
+            client = self.company.clients[row]
+            self.cc_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+            self.cc_window.show()
+        elif self.combo.currentText() == "Транспорт":
+            vehicle = self.company.vehicles[row]
+            self.cv_window.setWindowModality(Qt.WindowModality.ApplicationModal)
+            self.cv_window.show()
+
+    def delete_selected_row(self):
+        row = self.table.currentRow()
+        if row == -1:
+            return
+
+        if self.combo.currentText() == "Клиенты":
+            del self.company.clients[row]
+        elif self.combo.currentText() == "Транспорт":
+            del self.company.vehicles[row]
+
+        self.table.removeRow(row)
+
+    def optimize_distribution(self):
+        self.company.optimize_cargo_distribution()
+        self.refresh_table()
+
+    def refresh_table(self):
+        self.table.setRowCount(0)
+        if self.combo.currentText() == "Клиенты":
+            self.table.setColumnCount(3)
+            self.table.setHorizontalHeaderLabels(["Имя", "Вес груза", "VIP-статус"])
+            for client in self.company.clients:
+                self.add_client_row(client)
+        elif self.combo.currentText() == "Транспорт":
+            self.table.setColumnCount(4)
+            self.table.setHorizontalHeaderLabels(["ID", "Тип", "Вместительность", "Текущая загрузка"])
+            for vehicle in self.company.vehicles:
+                self.add_vehicle_row(vehicle)
+
+
+    def export_to_json(self):
+        data = {
+            "clients": [
+                {
+                    "name": client.name,
+                    "cargo_weight": client.cargo_weight,
+                    "is_vip": client.is_vip
+                }
+                for client in self.company.clients
+            ],
+            "vehicles": [
+                {
+                    "vehicle_id": vehicle.vehicle_id,
+                    "type": vehicle.__class__.__name__,
+                    "capacity": vehicle.capacity,
+                    "current_load": vehicle.current_load
+                }
+                for vehicle in self.company.vehicles
+            ]
+        }
+        try:
+            with open("company_data.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            QMessageBox.information(self, "Экспорт", "Данные успешно экспортированы в company_data.json")
+        except Exception as e:
+            QMessageBox.warning(self, "Ошибка экспорта", f"Не удалось сохранить файл: {e}")
+
 
 app = QApplication([])
-
-app.setStyleSheet("""
-QPushButton {
-    background-color: #ffffff;
-    color: #212121;
-    border: 1px solid #BDBDBD;
-    border-radius: 4px;
-    padding: 6px 12px;
-}
-QPushButton:hover {
-    background-color: #adacac
-}
-QPushButton:pressed {
-    background-color: #C0C0C0;
-}
-""")
+app.setStyleSheet(""" 
+    QPushButton { 
+        background-color: #ffffff;
+        color: #212121;
+        border: 1px solid #BDBDBD;
+        border-radius: 4px; padding: 6px 12px;
+    }
+    QPushButton:hover {
+        background-color: #adacac 
+    } 
+    QPushButton:pressed {
+        background-color: #C0C0C0; 
+    } """)
 
 window = MainWindow()
 window.show()
