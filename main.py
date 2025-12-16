@@ -5,9 +5,10 @@ from transport.task_3.transportCompany import TransportCompany
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton
 import sys
 
-def main():
-    company = TransportCompany("My Transport Company")
+company = TransportCompany("My Transport Company")
 
+
+def main():
     while True:
         print("\n=== Транспортная компания ===")
         print(">> 1. Добавить клиента")
@@ -81,6 +82,7 @@ def main():
 
             case _:
                 print("Неверный пункт меню.")
+
 
 
 if __name__ == "__main__":
