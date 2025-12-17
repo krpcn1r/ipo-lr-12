@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QWidget, QPushButton, QLineEdit, QCheckBox, QMessageBox
 from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QShowEvent, QKeyEvent
 
 class AddClient(QMainWindow):
     client_added = pyqtSignal(str, float, bool)
@@ -95,6 +96,21 @@ class AddClient(QMainWindow):
         """)
         btn_close.clicked.connect(self.close)
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Escape:
+            self.close()
+        else:
+            super().keyPressEvent(event)
+
+    def clear_fields(self):
+        self.line_add_name.clear()
+        self.line_add_weight.clear()
+        self.check_vip.setChecked(False)
+
+    def showEvent(self, event: QShowEvent):
+        super().showEvent(event)
+        self.clear_fields()
+
     def show_warning(self, message, field):
         QMessageBox.warning(self, "Ошибка ввода", message)
         field.clear()
@@ -112,4 +128,5 @@ class AddClient(QMainWindow):
             return
         is_vip = self.check_vip.isChecked()
         self.client_added.emit(name, weight, is_vip)
+        self.clear_fields()
         self.close()

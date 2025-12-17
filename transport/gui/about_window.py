@@ -1,4 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QApplication, QWidget, QLabel, QPushButton
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeyEvent
 import sys
 
 
@@ -51,3 +53,9 @@ class AboutWindow(QMainWindow):
         btn_close = QPushButton("Закрыть", central)
         btn_close.setGeometry(20, 190, 140, 40)
         btn_close.clicked.connect(self.close)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Escape:
+            self.close()
+        else:
+            super().keyPressEvent(event)

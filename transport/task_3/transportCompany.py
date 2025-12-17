@@ -10,7 +10,7 @@ class TransportCompany:
 
     def add_vehicle(self, vehicle):
         if not isinstance(vehicle, Vehicle):
-            raise TypeError("Должен быть классов Vehicle или наследуемым классом")
+            raise TypeError("Должен быть классом Vehicle или наследуемым классом")
         self.vehicles.append(vehicle)
 
     def list_vehicles(self):
@@ -22,11 +22,39 @@ class TransportCompany:
         self.clients.append(client)
 
     def optimize_cargo_distribution(self):
-        sorted_clients = sorted(self.clients, key=lambda c: not c.is_vip)
+        if not self.vehicles:
+            return
+        if not self.clients:
+            return
+
+        for vehicle in self.vehicles:
+            vehicle.current_load = 0.0
+            vehicle.clients_list = []
+
+        sorted_clients = sorted(
+            self.clients,
+            key=lambda c: (not c.is_vip, -c.cargo_weight)
+        )
+
         for client in sorted_clients:
-            for vehicle in sorted(self.vehicles, key=lambda v: v.current_load):
+            if client is None:
+                continue
+            best_vehicle = None
+            min_remaining_capacity = float('inf')
+
+            for vehicle in self.vehicles:
+                if vehicle is None:
+                    continue
+                remaining_capacity = vehicle.capacity - vehicle.current_load
+                if remaining_capacity >= client.cargo_weight:
+                    if remaining_capacity < min_remaining_capacity:
+                        min_remaining_capacity = remaining_capacity
+                        best_vehicle = vehicle
+
+            if best_vehicle is not None:
                 try:
-                    vehicle.load_cargo(client)
-                    break
-                except ValueError:
+                    result = best_vehicle.load_cargo(client)
+                    if result is not None:
+                        best_vehicle.clients_list.append(client)
+                except (ValueError, AttributeError):
                     continue
