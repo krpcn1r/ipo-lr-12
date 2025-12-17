@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QWidget, QPushButton, QComboBox, QLineEdit, QMessageBox
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtGui import QShowEvent, QKeyEvent
 from transport.task_3.truck import Truck
 from transport.task_3.ship import Ship
 
@@ -74,14 +75,34 @@ class AddVehicle(QMainWindow):
 
         btn.clicked.connect(self.on_add_vehicle)
         self.combo.currentTextChanged.connect(self.on_combo_changed)
+        self.on_combo_changed(self.combo.currentText())
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Escape:
+            self.close()
+        else:
+            super().keyPressEvent(event)
+
+    def clear_fields(self):
+        self.line_capacity.clear()
+        self.line_name.clear()
+        self.line_color.clear()
+        self.combo.setCurrentIndex(0)
+        self.on_combo_changed(self.combo.currentText())
+
+    def showEvent(self, event: QShowEvent):
+        super().showEvent(event)
+        self.clear_fields()
 
     def on_combo_changed(self, text):
         if text == "Грузовик":
-            self.line_color.hide()
-            self.line_name.show()
-        elif text == "Судно":
             self.line_name.hide()
+            self.line_name.clear()
             self.line_color.show()
+        elif text == "Судно":
+            self.line_color.hide()
+            self.line_color.clear()
+            self.line_name.show()
 
     def show_warning(self, message, field):
         QMessageBox.warning(self, "Ошибка ввода", message)
@@ -106,4 +127,5 @@ class AddVehicle(QMainWindow):
             vehicle = Ship(capacity, self.line_name.text().strip())
 
         self.vehicle_added.emit(vehicle)
+        self.clear_fields()
         self.close()

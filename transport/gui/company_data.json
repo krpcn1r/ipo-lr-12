@@ -1,0 +1,17 @@
+{
+    "clients": [
+        {
+            "name": "ghj",
+            "cargo_weight": 12.0,
+            "is_vip": false
+        }
+    ],
+    "vehicles": [
+        {
+            "vehicle_id": "282118",
+            "type": "Truck",
+            "capacity": 123.0,
+            "current_load": 0.0
+        }
+    ]
+}
