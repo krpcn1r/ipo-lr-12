@@ -2,14 +2,15 @@ from transport.task_1.client import Client
 from transport.task_3.ship import Ship
 from transport.task_3.truck import Truck
 from transport.task_3.transportCompany import TransportCompany
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton
 import sys
 
+# Инициализация объекта компании
 company = TransportCompany("My Transport Company")
 
 
 def main():
     while True:
+        # Основное меню взаимодействия с пользователем 
         print("\n=== Транспортная компания ===")
         print(">> 1. Добавить клиента")
         print(">> 2. Добавить транспортное средство")
@@ -22,6 +23,7 @@ def main():
 
         match choice:
             case 1:
+                # Создание клинта
                 name = input("Введите имя клиента: ")
                 weight = float(input("Введите вес груза (т): "))
                 vip = input("VIP клиент? (y/n): ").lower() == "y"
@@ -29,6 +31,7 @@ def main():
                 company.add_client(client)
                 print(f"Клиент {name} добавлен.")
             case 2:
+                # Создание различных типов транспорта (Судно или Грузовик)
                 print("Выберите тип транспорта:")
                 print("1. Судно")
                 print("2. Грузовик")
@@ -49,6 +52,7 @@ def main():
                 else:
                     print("Неверный выбор.")
             case 3:
+                # Вывод списка клиентов компании
                 if not company.clients:
                     print("Список клиентов пуст.")
                 else:
@@ -58,6 +62,7 @@ def main():
                         print(f"{c.name}, груз: {c.cargo_weight}т, статус: {status}")
 
             case 4:
+                # Вывод списка транспорта компании
                 if not company.vehicles:
                     print("Список транспортных средств пуст.")
                 else:
@@ -66,15 +71,16 @@ def main():
                         print(v)
 
             case 5:
+                # Вызов фукнции для распределения грузов
                 company.optimize_cargo_distribution()
                 print("\n--- Результат распределения ---")
                 for v in company.vehicles:
                     print(v)
                     if v.clients_list:
                         for c in v.clients_list:
-                            print(f"   - {c.name}, груз: {c.cargo_weight}т")
+                            print(f"    - {c.name}, груз: {c.cargo_weight}т")
                     else:
-                        print("   (пусто)")
+                        print("    (пусто)")
 
             case 6:
                 print("Выход из программы...")
@@ -86,4 +92,5 @@ def main():
 
 
 if __name__ == "__main__":
+    # Точка входа в программу
     main()
