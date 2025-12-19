@@ -338,7 +338,7 @@ if __name__ == "__main__":
             background-color: #ffffff;
         }
         QCheckBox::indicator:checked {
-            background-color: #505050;
+            background-color: #00FF00;
             border-color: #303030;
         }
         QCheckBox::indicator:hover {
